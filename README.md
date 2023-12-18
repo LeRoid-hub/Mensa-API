@@ -1,1 +1,1 @@
-# Mensa-Bremen-API
+# Mensa-API
