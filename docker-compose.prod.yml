@@ -1,0 +1,7 @@
+version: '3.7'
+
+services:
+  mensa-api-docker:
+    build:
+      target: production
+    command: node build/index.js
