@@ -1,11 +1,11 @@
-export class Cache {
+export default class Cache {
     cachedData: any;
     lastUsed: Date;
     lifeTime: number;
     mensa: string;
 
     constructor() {
-        this.cachedData = {};
+        this.cachedData = null;
         this.lastUsed = new Date();
         this.lifeTime = 1000 * 30;
         this.mensa = "";
@@ -16,7 +16,7 @@ export class Cache {
             return null;
         }
 
-        if (this.cachedData === null) {
+        if (this.cachedData == null) {
             return null;
         }
 
