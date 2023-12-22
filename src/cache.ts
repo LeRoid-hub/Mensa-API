@@ -1,14 +1,14 @@
-export default class Cache {
+class SiteCache {
     cachedData: any;
     lastUsed: Date;
     lifeTime: number;
-    mensa: string;
+    key: string;
 
     constructor() {
         this.cachedData = null;
         this.lastUsed = new Date();
         this.lifeTime = 1000 * 30;
-        this.mensa = "";
+        this.key = "";
     }
 
     get() {
@@ -23,10 +23,38 @@ export default class Cache {
         return this.cachedData;
     }
 
-    set(mensa: string, data: any) {
+    set(key: string, data: any) {
         this.cachedData = data;
         this.lastUsed = new Date();
-        this.mensa = mensa;
+        this.key = key;
     }
 }
 
+export default class Cache {
+    cache: SiteCache[];
+
+    constructor() {
+        this.cache = [];
+    }
+
+    get(key: string) {
+        for (let i = 0; i < this.cache.length; i++) {
+            if (this.cache[i].key === key) {
+                return this.cache[i].get();
+            }
+        }
+        return null;
+    }
+
+    set(key: string, data: any) {
+        for (let i = 0; i < this.cache.length; i++) {
+            if (this.cache[i].key === key) {
+                this.cache[i].set(key, data);
+                return;
+            }
+        }
+        let siteCache = new SiteCache();
+        siteCache.set(key, data);
+        this.cache.push(siteCache);
+    }
+}

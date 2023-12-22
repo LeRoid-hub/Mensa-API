@@ -7,11 +7,11 @@ import morgan from "morgan";
 
 import fetch from './fetch.js';
 import Cache from './cache.js';
-import stripHtml from "./stripper.js";
+import {stripMensa, stripCampus} from "./stripper.js";
 
 dotenv.config();
 
-const app: Express = express().use(cors({ origin: '*' }));
+const app: Express = express().use(cors({ origin: '*' })).use(bodyParser.json());
 app.use(morgan('combined'))
 
 const port = process.env.PORT || 3000;
@@ -24,7 +24,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Mensa API");
 });
 
-app.get("/api/:Ort", (req: Request, res: Response) => {
+app.get("/api/:Ort/:Mensa?", (req: Request, res: Response) => {
     if (req.params.Ort === null) {
         return res.send("Invalid request");
     }
@@ -34,7 +34,13 @@ app.get("/api/:Ort", (req: Request, res: Response) => {
     }else {
         let url = baseUrl + req.params.Ort.toLowerCase(); 
         fetch(url).then((data) => {
-            let stripedData = stripHtml(data);
+            let stripedData = null;
+            if (req.params.Mensa !== null) {
+                let stripedData = stripMensa(data);
+            }else {
+                let stripedData = stripCampus(data);
+            }
+
             cache.set(req.params.Ort, stripedData);
             res.send(stripedData);
         });
@@ -43,7 +49,7 @@ app.get("/api/:Ort", (req: Request, res: Response) => {
 });
 
 app.get("/api", (req: Request, res: Response) => {
-    res.send("/api/:Ort/:Mensa");
+    res.send("/api/:Ort/:Mensa?");
 });
 
 app.listen(port, () => {
