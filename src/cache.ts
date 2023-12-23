@@ -23,10 +23,11 @@ class SiteCache {
         return this.cachedData;
     }
 
-    set(key: string, data: any) {
+    set(key: string, data: any, lifeTime: number = 1000 * 60 * 30) {
         this.cachedData = data;
         this.lastUsed = new Date();
         this.key = key;
+        this.lifeTime = lifeTime;
     }
 }
 
@@ -46,10 +47,10 @@ export default class Cache {
         return null;
     }
 
-    set(key: string, data: any) {
+    set(key: string, data: any, lifeTime: number = 1000 * 60 * 30) {
         for (let i = 0; i < this.cache.length; i++) {
             if (this.cache[i].key === key) {
-                this.cache[i].set(key, data);
+                this.cache[i].set(key, data, lifeTime);
                 return;
             }
         }
