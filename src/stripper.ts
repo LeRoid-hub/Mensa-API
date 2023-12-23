@@ -2,18 +2,18 @@ import * as cheerio from 'cheerio';
 
 class Campus {
     name: string;
-    mensen: Mensa[];
+    locations: Mensa[];
 
     constructor(name: string) {
         this.name = name;
-        this.mensen = [];
+        this.locations = [];
     }
     addMensa(mensa: Mensa) {
-        this.mensen.push(mensa);
+        this.locations.push(mensa);
     }
     toString() {
         let str = this.name + "\n";
-        this.mensen.forEach((elem) => {
+        this.locations.forEach((elem) => {
             str += "  -> " + elem.name + " | " + elem.url + "\n";
         });
         return str;
