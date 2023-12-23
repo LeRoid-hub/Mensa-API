@@ -11,6 +11,13 @@ class Campus {
     addMensa(mensa: Mensa) {
         this.mensen.push(mensa);
     }
+    toString() {
+        let str = this.name + "\n";
+        this.mensen.forEach((elem) => {
+            str += "  -> " + elem.name + " | " + elem.url + "\n";
+        });
+        return str;
+    }
 }
 
 class Mensa {
@@ -20,6 +27,39 @@ class Mensa {
     constructor(name: string, url: string) {
         this.name = name;
         this.url = url;
+    }
+}
+
+class Menu {
+    name: string;
+    meals: Meal[];
+
+    constructor(name: string) {
+        this.name = name;
+        this.meals = [];
+    }
+    addMeal(meal: Meal) {
+        this.meals.push(meal);
+    }
+
+    toString() {
+        let str = this.name + "\n";
+        this.meals.forEach((elem) => {
+            str += "  -> " + elem.name + " | " + elem.price + " | " + elem.atributs + "\n";
+        });
+        return str;
+    }
+}
+
+class Meal {
+    name: string;
+    price: string;
+    atributs: string[];
+
+    constructor(name: string, price: string,  atributs: string[] ) {
+        this.name = name;
+        this.price = price;
+        this.atributs = atributs;
     }
 }
 
@@ -45,6 +85,36 @@ export function stripCampus(html: string): JSON {
 
 export function stripMensa(html: string): string {
     const $ = cheerio.load(html);
-    return "Mensa";
+
+    let menus :Menu[] = [];
+
+    const $menu = $('.aw-meal-category'); 
+    $menu.each((i, elem) => {
+        const menu = new Menu($(elem).find('h3').text());
+
+        //meal
+        $(elem).find('.aw-meal').each((i, elem) => {
+            const name = $(elem).find('.aw-meal-description').text();
+            const price = $(elem).find('.aw-meal-price').text();
+            
+            //delete  last time served
+            $(elem).find('.aw-meal-attributes').find('.hidden-md').remove();
+            
+            const atributs :string[] = $(elem).find('.aw-meal-attributes').text().split(" ");
+
+            atributs.forEach((elem, i) => {
+                elem = elem.trim();
+                atributs[i] = elem;
+            });
+
+
+            menu.addMeal(new Meal(name, price, atributs));
+        });
+        menus.push(menu);
+    });
+    if (menus.length === 0) {
+        return JSON.parse("No usable Data found");
+    }
+    return JSON.parse(JSON.stringify(menus));
 }
 

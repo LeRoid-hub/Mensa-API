@@ -24,32 +24,60 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Mensa API");
 });
 
-app.get("/api/:Ort/:Mensa?", (req: Request, res: Response) => {
-    if (req.params.Ort === null) {
+
+app.get("/api/bl/:Bundesland", (req: Request, res: Response) => {
+    if (req.params.Bundesland === undefined) {
         return res.send("Invalid request");
     }
-    let cachedData = cache.get();
+    let cachedData = cache.get("BL: "+req.params.Bundesland);
     if (cachedData !== null) {
         return res.send(cachedData);
     }else {
-        let url = baseUrl + req.params.Ort.toLowerCase(); 
+        let url = baseUrl + req.params.Bundesland.toLowerCase()+".html";
         fetch(url).then((data) => {
             let stripedData = null;
-            if (req.params.Mensa !== null) {
-                let stripedData = stripMensa(data);
+            if (data === null) {
+                return res.send("Invalid request");
+            }
+            stripedData = stripCampus(data);
+            cache.set("BL: "+req.params.Bundesland, stripedData);
+            res.send(stripedData);
+        });
+    }
+});
+app.get("/api/:Location/:Mensa?", (req: Request, res: Response) => {
+    if (req.params.Location === undefined) {
+        return res.send("Invalid request");
+    }
+    let cachedData = cache.get(req.params.Mensa ?? req.params.Location);
+    if (cachedData !== null) {
+        return res.send(cachedData);
+    }else {
+        let url = baseUrl + req.params.Location.toLowerCase(); 
+        if (req.params.Mensa !== undefined) {
+            url += "/" + req.params.Mensa.toLowerCase();
+        }
+        fetch(url).then((data) => {
+            let stripedData = null;
+            if (data === null) {
+                return res.send("Invalid request");
+            }
+            if (req.params.Mensa !== undefined) {
+                stripedData = stripMensa(data);
             }else {
-                let stripedData = stripCampus(data);
+                stripedData = stripCampus(data);
             }
 
-            cache.set(req.params.Ort, stripedData);
+            cache.set(req.params.Mensa ?? req.params.Location, stripedData);
             res.send(stripedData);
         });
     }
 
 });
 
+    
 app.get("/api", (req: Request, res: Response) => {
-    res.send("/api/:Ort/:Mensa?");
+    res.send("/api/:Location/:Mensa?");
 });
 
 app.listen(port, () => {
