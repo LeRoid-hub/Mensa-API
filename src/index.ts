@@ -1,4 +1,8 @@
-// src/index.js
+// index.ts
+/**
+    * @file This is the main file of the project.
+    * @version 1.0.0
+*/
 import express, { Express, Request, Response} from "express";
 import dotenv from "dotenv";
 import cors from "cors";
