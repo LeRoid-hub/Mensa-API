@@ -40,7 +40,8 @@ app.get("/api/bl/:Bundesland", (req: Request, res: Response) => {
                 return res.send("Invalid request");
             }
             stripedData = stripCampus(data);
-            cache.set("BL: "+req.params.Bundesland, stripedData);
+            const lifeTime = 1000 * 60 * 60 * 24 * 7;
+            cache.set("BL: "+req.params.Bundesland, stripedData, lifeTime);
             res.send(stripedData);
         });
     }
@@ -59,13 +60,16 @@ app.get("/api/:Location/:Mensa?", (req: Request, res: Response) => {
         }
         fetch(url).then((data) => {
             let stripedData = null;
+            let lifeTime = 1000 * 30;
             if (data === null) {
                 return res.send("Invalid request");
             }
             if (req.params.Mensa !== undefined) {
                 stripedData = stripMensa(data);
+                lifeTime = 1000 * 60 * 60 * 24;
             }else {
                 stripedData = stripCampus(data);
+                lifeTime = 1000 * 60 * 30;
             }
 
             cache.set(req.params.Mensa ?? req.params.Location, stripedData);
