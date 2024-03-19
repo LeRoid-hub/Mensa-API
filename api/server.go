@@ -2,27 +2,27 @@ package main
 
 import (
 	"net/http"
+	"net/url"
+	"io"
 
-	"github.com/LeRoid-hub/Mensa-API/blob/go/api/fetch.go"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
-	r.GET("/ping", ping)
-	r.GET("/fetch", fetchRoute)
+	r.GET("/fetch/:url", fetchRoute)
 	r.Run("localhost:8080")
 }
 
 func fetchRoute(c *gin.Context) {
-	url := c.Query("url")
+	url := c.Param("url")
 	if url == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "url is required",
 		})
 		return
 	}
-	resp, err := fetch.Fetch(url)
+	resp, err := Fetch(url)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -30,13 +30,26 @@ func fetchRoute(c *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
-	c.JSON(http.StatusOK, gin.H{
-		"status": resp.Status,
-	})
+	d, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	d = string(d)
+	c.JSON(http.StatusOK, d)
+
 }
 
-func ping(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
+func Fetch(path string) (*http.Response, error) {
+	baseurl := "https://www.imensa.de/"
+	queryurl  := baseurl + "/" + path
+	u, err := url.ParseRequestURI(queryurl)
+	if err != nil {
+		return nil, err
+	}
+
+	return http.Get(u.String())
+
 }
