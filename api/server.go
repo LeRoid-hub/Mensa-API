@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"fetch"
+	"github.com/LeRoid-hub/Mensa-API/blob/go/api/fetch.go"
 	"github.com/gin-gonic/gin"
 )
 
