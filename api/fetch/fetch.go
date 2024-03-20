@@ -2,7 +2,6 @@ package fetch
 
 import (
 	"net/http"
-	"net/url"
 )
 
 func Fetch(url string) (*http.Response, error) {
@@ -13,4 +12,3 @@ func Fetch(url string) (*http.Response, error) {
 
 	return http.Get(url)
 }
-
