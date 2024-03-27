@@ -5,13 +5,12 @@ import (
 	"mensa/cache"
 	"mensa/fetch"
 	"mensa/scrape"
-	"mensa/types"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-var c = cache.NewCache()
+var ca = cache.NewCache()
 
 func Run() {
 	r := gin.Default()
@@ -28,8 +27,8 @@ func bundesland(c *gin.Context) {
 		return
 	}
 
-	if c.GetCacheData(bundesland) != "" {
-		return c.GetCacheData(bundesland)
+	if ca.GetCacheData(bundesland) != "" {
+		return ca.GetCacheData(bundesland)
 	}
 
 	resp, err := fetch.Fetch("bl/" + bundesland)
