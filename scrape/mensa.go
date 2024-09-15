@@ -10,6 +10,8 @@ import (
 
 func ScrapeMensa(h io.ReadCloser) models.Mensa {
 	var mensa models.Mensa
+	var mensaName = ""
+	var mensaLocation = ""
 
 	doc, err := goquery.NewDocumentFromReader(h)
 	if err != nil {
@@ -17,7 +19,7 @@ func ScrapeMensa(h io.ReadCloser) models.Mensa {
 	}
 
 	doc.Find("h1.aw-title-header-title").First().Each(func(i int, s *goquery.Selection) {
-		mensa.Name = s.Text()
+		mensaName = s.Text()
 	})
 
 	doc.Find("a.panel-body").Each(func(i int, s *goquery.Selection) {
@@ -29,14 +31,16 @@ func ScrapeMensa(h io.ReadCloser) models.Mensa {
 		l = strings.Replace(l, "<br>", " ", -1)
 		l = strings.Replace(l, "</br>", " ", -1)
 
-		mensa.Location = l
+		mensaLocation = l
 	})
+
+	mensa.SetMensa(mensaName, mensaLocation)
 
 	//Day
 	var day models.Day
 
 	doc.Find("h2.aw-menu-title").Each(func(i int, s *goquery.Selection) {
-		day.DayName = s.Text()
+		day.SetDay(s.Text())
 	})
 
 	//Menu
@@ -45,25 +49,29 @@ func ScrapeMensa(h io.ReadCloser) models.Mensa {
 		var menu models.Menu
 
 		s.Find("h3.aw-meal-category-name").Each(func(i int, t *goquery.Selection) {
-			menu.Name = t.Text()
+			menu.SetMenu(t.Text())
 		})
 
 		//Meal
 		var meal models.Meal
 
 		s.Find("div.aw-meal").Each(func(i int, t *goquery.Selection) {
+			mealName := ""
+			mealPrice := ""
+			mealAttributes := ""
 			t.Find("p.aw-meal-description").First().Each(func(i int, u *goquery.Selection) {
-				meal.Name = u.Text()
+				mealName = u.Text()
 			})
 			t.Find("div.aw-meal-price").First().Each(func(i int, u *goquery.Selection) {
-				meal.Price = u.Text()
+				mealPrice = u.Text()
 			})
 			t.Find("p.aw-meal-attributes").First().Each(func(i int, u *goquery.Selection) {
-				meal.Attributes = u.Text()
+				mealAttributes = u.Text()
 			})
-			menu.Meal = append(menu.Meal, meal)
+			meal.SetMeal(mealName, mealPrice, mealAttributes)
+			menu.AddMeal(meal)
 		})
-		day.Menu = append(day.Menu, menu)
+		day.AddMenu(menu)
 	})
 	mensa.AddDay(day)
 
