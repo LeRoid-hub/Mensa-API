@@ -1,7 +1,6 @@
 package server
 
 import (
-	"github.com/LeRoid-hub/Mensa-API/cache"
 	"github.com/LeRoid-hub/Mensa-API/fetch"
 	"github.com/LeRoid-hub/Mensa-API/scrape"
 	"github.com/gin-gonic/gin"
@@ -13,11 +12,6 @@ func state(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"error": "state is required",
 		})
-		return
-	}
-
-	if cache.HasCacheData(state) {
-		c.JSON(200, cache.GetCacheData(state))
 		return
 	}
 
@@ -38,5 +32,6 @@ func state(c *gin.Context) {
 	}
 
 	scraped := scrape.ScrapeState(resp.Body)
+
 	c.JSON(200, scraped)
 }

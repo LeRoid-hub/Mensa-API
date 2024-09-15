@@ -1,14 +1,17 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type CacheItem struct {
-	data        string
+	data        Mensa
 	lastUpdated time.Time
 	lifetime    int64
 }
 
-func (c *CacheItem) SetData(data string, lifetime ...int64) {
+func (c *CacheItem) SetData(data Mensa, lifetime ...int64) {
 	if len(lifetime) > 0 {
 		c.lifetime = lifetime[0]
 	} else {
@@ -19,14 +22,14 @@ func (c *CacheItem) SetData(data string, lifetime ...int64) {
 	c.lastUpdated = time.Now()
 }
 
-func (c *CacheItem) GetData() string {
+func (c *CacheItem) GetData() (Mensa, error) {
 	if time.Now().Unix()-c.lastUpdated.Unix() > c.lifetime {
-		return ""
+		return Mensa{}, errors.New("cache expired")
 	}
 
-	if c.data == "" {
-		return ""
+	if c.lastUpdated.IsZero() {
+		return Mensa{}, errors.New("no data in cache")
 	}
 
-	return c.data
+	return c.data, nil
 }

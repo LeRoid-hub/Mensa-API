@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"errors"
+
 	"github.com/LeRoid-hub/Mensa-API/models"
 )
 
@@ -11,15 +13,15 @@ func HasCacheData(key string) bool {
 	return ok
 }
 
-func GetCacheData(key string) string {
+func GetCacheData(key string) (models.Mensa, error) {
 	Item, ok := Cache[key]
 	if !ok {
-		return ""
+		return models.Mensa{}, errors.New("no data in cache")
 	}
 	return Item.GetData()
 }
 
-func SetCacheData(key string, data string, lifetime ...int64) {
+func SetCacheData(key string, data models.Mensa, lifetime ...int64) {
 	Item, ok := Cache[key]
 	if !ok {
 		Item = models.CacheItem{}

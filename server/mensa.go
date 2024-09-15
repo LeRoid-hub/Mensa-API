@@ -24,7 +24,14 @@ func mensa(c *gin.Context) {
 	}
 
 	if cache.HasCacheData(city + "/" + mensa) {
-		c.JSON(200, cache.GetCacheData(mensa))
+		cacheData, err := cache.GetCacheData(city + "/" + mensa)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, cacheData)
 		return
 	}
 
@@ -46,7 +53,7 @@ func mensa(c *gin.Context) {
 
 	scraped := scrape.ScrapeMensa(resp.Body)
 
-	//cache.SetCacheData(city+"/"+mensa, scraped)
+	cache.SetCacheData(city+"/"+mensa, scraped)
 
 	c.JSON(200, scraped)
 }
