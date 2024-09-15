@@ -17,7 +17,6 @@ func ScrapeState(h io.ReadCloser) []string {
 
 	doc.Find("a.primary").Each(func(i int, s *goquery.Selection) {
 		href, _ := s.Attr("href")
-		print(href)
 
 		city := strings.Split(href, "/")[0]
 
