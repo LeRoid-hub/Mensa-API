@@ -12,5 +12,7 @@ func Run() {
 		})
 	})
 	r.GET("/state/:state", state)
+	r.GET("/city/:city", city)
+	r.GET("/mensa/:city/:mensa", mensa)
 	r.Run() // listen and serve on
 }
