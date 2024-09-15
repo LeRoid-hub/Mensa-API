@@ -40,9 +40,9 @@ func ScrapeMensa(h io.ReadCloser) models.Mensa {
 	})
 
 	//Menu
-	var menu models.Menu
-
 	doc.Find("div.aw-meal-category").Each(func(i int, s *goquery.Selection) {
+
+		var menu models.Menu
 
 		s.Find("h3.aw-meal-category-name").Each(func(i int, t *goquery.Selection) {
 			menu.Name = t.Text()
