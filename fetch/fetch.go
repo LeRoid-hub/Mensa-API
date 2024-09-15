@@ -6,7 +6,7 @@ import (
 )
 
 func Fetch(path string) (*http.Response, error) {
-	baseurl := "https://www.imensa.de/"
+	baseurl := "https://www.imensa.de"
 	queryurl := baseurl + "/" + path
 	u, err := url.ParseRequestURI(queryurl)
 	if err != nil {

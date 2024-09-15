@@ -1,7 +1,7 @@
 package main
 
 import (
-	"mensa/server"
+	"github.com/LeRoid-hub/Mensa-API/server"
 )
 
 func main() {

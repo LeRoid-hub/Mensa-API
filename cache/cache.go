@@ -1,18 +1,29 @@
 package cache
 
 import (
-	"mensa/types"
+	"github.com/LeRoid-hub/Mensa-API/models"
 )
 
-func NewCache() *types.Cache {
-	cache := types.Cache{}
-	return &cache
+var Cache = make(map[string]models.CacheItem)
+
+func HasCacheData(key string) bool {
+	_, ok := Cache[key]
+	return ok
 }
 
-func setCacheData(cache *types.Cache, key string, data string, lifetime ...int64) {
-	cache.SetData(key, data, lifetime...)
+func GetCacheData(key string) string {
+	Item, ok := Cache[key]
+	if !ok {
+		return ""
+	}
+	return Item.GetData()
 }
 
-func getCacheData(cache *types.Cache) string {
-	return cache.GetData()
+func SetCacheData(key string, data string, lifetime ...int64) {
+	Item, ok := Cache[key]
+	if !ok {
+		Item = models.CacheItem{}
+	}
+	Item.SetData(data, lifetime...)
+	Cache[key] = Item
 }
