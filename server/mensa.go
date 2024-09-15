@@ -28,7 +28,7 @@ func mensa(c *gin.Context) {
 		return
 	}
 
-	resp, err := fetch.Fetch(mensa)
+	resp, err := fetch.Fetch(city + "/" + mensa)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"error": err.Error(),
@@ -44,6 +44,9 @@ func mensa(c *gin.Context) {
 		return
 	}
 
-	scraped := scrape.ScrapeState(resp.Body)
+	scraped := scrape.ScrapeMensa(resp.Body)
+
+	//cache.SetCacheData(city+"/"+mensa, scraped)
+
 	c.JSON(200, scraped)
 }
