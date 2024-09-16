@@ -9,7 +9,14 @@ import (
 var Cache = make(map[string]models.CacheItem)
 
 func HasCacheData(key string) bool {
-	_, ok := Cache[key]
+	data, ok := Cache[key]
+	if !ok {
+		return false
+	}
+	if data.IsExpired() {
+		delete(Cache, key)
+		return false
+	}
 	return ok
 }
 

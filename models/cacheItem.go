@@ -33,3 +33,10 @@ func (c *CacheItem) GetData() (Mensa, error) {
 
 	return c.data, nil
 }
+
+func (c *CacheItem) IsExpired() bool {
+	if time.Now().Unix()-c.lastUpdated.Unix() > c.lifetime {
+		return true
+	}
+	return false
+}
