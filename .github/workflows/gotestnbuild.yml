@@ -7,7 +7,7 @@ on:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  IMAGE_NAME: leroid-hub/mensa-api:latest
+  IMAGE_NAME: leroid-hub/Mensa-API:latest
   PAT: ${{ secrets.PAT }}
 
 jobs:
