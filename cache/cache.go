@@ -6,7 +6,7 @@ import (
 	"github.com/LeRoid-hub/Mensa-API/models"
 )
 
-var Cache = make(map[string]models.CacheItem)
+var Cache = make(map[string]models.CacheItem[interface{}])
 
 func HasCacheData(key string) bool {
 	data, ok := Cache[key]
@@ -20,7 +20,7 @@ func HasCacheData(key string) bool {
 	return ok
 }
 
-func GetCacheData(key string) (models.Mensa, error) {
+func GetCacheData(key string) (interface{}, error) {
 	Item, ok := Cache[key]
 	if !ok {
 		return models.Mensa{}, errors.New("no data in cache")
@@ -28,10 +28,10 @@ func GetCacheData(key string) (models.Mensa, error) {
 	return Item.GetData()
 }
 
-func SetCacheData(key string, data models.Mensa, lifetime ...int64) {
+func SetCacheData(key string, data interface{}, lifetime ...int64) {
 	Item, ok := Cache[key]
 	if !ok {
-		Item = models.CacheItem{}
+		Item = models.CacheItem[interface{}]{}
 	}
 	Item.SetData(data, lifetime...)
 	Cache[key] = Item
