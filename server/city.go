@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/LeRoid-hub/Mensa-API/cache"
 	"github.com/LeRoid-hub/Mensa-API/fetch"
 	"github.com/LeRoid-hub/Mensa-API/scrape"
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,18 @@ func city(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"error": "city is required",
 		})
+		return
+	}
+
+	if cache.HasCacheData("city/" + city) {
+		cacheData, err := cache.GetCacheData("city/" + city)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, cacheData)
 		return
 	}
 
@@ -32,5 +45,7 @@ func city(c *gin.Context) {
 	}
 
 	scraped := scrape.ScrapeState(resp.Body)
+
+	cache.SetCacheData("city/"+city, scraped)
 	c.JSON(200, scraped)
 }
